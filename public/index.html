@@ -4,34 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JokeGPT.net</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
 </head>
-<body>
-<center>
-<img src="https://i.ibb.co/k5Gpg6r/1626590-emoji-emoticons-happy-laugh-laughing-icon128px.png" border="0">
-<h1>JokeGPT.net</h1>
-<label for="subject">Subject to joke about:</label>
-<input type="text" id="subject" name="subject">
-<button onclick="generateJokes()">Generate Jokes</button>
-<br>may take up to 10 seconds
+<body style ="background-color: black;">
+    <font color="white">
+    <center>
+    <img src="https://i.ibb.co/k5Gpg6r/1626590-emoji-emoticons-happy-laugh-laughing-icon128px.png" border="0">
+    <h1>JokeGPT.net</h1>
+    <div>
+        <input type="text" id="subjectInput" placeholder="Enter subject to joke about">
+        <button onclick="submitSubject()">Write comedy</button>
+        </div>
+    </div>
+    <P><By <a href = "http://danbroz.com">Daniel Broz</a> and ChatGPT<P>
+    </center>
+    <div id="terminal"></div>
 
-<pre id="jokesOutput"></pre>
+    <script>
+        const term = new Terminal();
+        const fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(document.getElementById('terminal'));
+        fitAddon.fit();
 
-<script>
-    async function generateJokes() {
-        const subject = document.getElementById("subject").value;
-        const response = await fetch('/generate-jokes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ subject: subject }),
-        });
-        
-        const data = await response.text();
-        document.getElementById("jokesOutput").textContent = data;
-    }
-</script>
-<P>
-By <a href = 'http://danbroz.com'>Daniel Broz</a> and ChatGPT
+        const socket = new WebSocket('ws://localhost:3000');
+
+        socket.onopen = () => {
+            socket.onmessage = (event) => {
+                term.write(event.data);
+            };
+        };
+
+        function submitSubject() {
+            const subject = document.getElementById('subjectInput').value;
+            socket.send(subject);
+        }
+    </script>
 </body>
 </html>
