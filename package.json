@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "node": "^21.0.0",
+    "openai": "^4.12.4",
+    "prompt": "^1.3.0",
+    "readline-sync": "^1.4.10"
+  }
+}
