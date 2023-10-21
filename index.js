@@ -1,4 +1,4 @@
-let API_KEY = "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";
+let API_KEY = "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";
 
 const {OpenAI} = require("openai");
 const readline = require('readline-sync');

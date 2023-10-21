@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JokeGPT.net</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+</head>
+<body style ="background-color: black;">
+    <font color="white">
+    <center>
+    <img src="https://i.ibb.co/k5Gpg6r/1626590-emoji-emoticons-happy-laugh-laughing-icon128px.png" border="0">
+    <h1>JokeGPT.net</h1>
+    <div>
+        <input type="text" id="subjectInput" placeholder="Enter subject to joke about">
+        <button onclick="submitSubject()">Write comedy</button>
+        </div>
+    </div>
+    <P><center>By <a href = 'http://danbroz.com'>Daniel Broz</a> and ChatGPT</center><P>
+    </center>
+    <div id="terminal"></div>
+
+    <script>
+        const term = new Terminal();
+        const fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(document.getElementById('terminal'));
+        fitAddon.fit();
+
+        const socket = new WebSocket('ws://localhost:3000');
+
+        socket.onopen = () => {
+            socket.onmessage = (event) => {
+                term.write(event.data);
+            };
+        };
+
+        function submitSubject() {
+            const subject = document.getElementById('subjectInput').value;
+            socket.send(subject);
+        }
+    </script>
+</body>
+</html>
