@@ -35,10 +35,9 @@ wss.on('connection', (ws) => {
 
         for await (const part of completion) {
             let text = part.choices[0].delta.content ?? "";
-            full += text;
+            //full += text;
 
-            
-           ws.send(text);
+            ws.send(text);
              // Send the joke back to the client
         }
         ws.send('\r\n\r\n');
