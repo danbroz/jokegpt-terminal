@@ -20,8 +20,8 @@ const db = admin.firestore();
 const app = express();
 
 const credentials = {
-    key: fs.readFileSync('server.key', 'utf8'),
-    cert: fs.readFileSync('server.crt', 'utf8')
+    key: fs.readFileSync('/etc/letsencrypt/live/jokegpt.net/privkey.pem', 'utf8'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/jokegpt.net/fullchain.pem', 'utf8')
 };
 
 const server = http.createServer(credentials, app);

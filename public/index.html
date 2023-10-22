@@ -64,7 +64,7 @@
         term.open(document.getElementById('terminal'));
         fitAddon.fit();
 
-        const socket = new WebSocket('ws://35.226.164.116/:443');
+        const socket = new WebSocket('ws://35.226.164.116:443');
 
         socket.onopen = () => {
             socket.onmessage = (event) => {
