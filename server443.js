@@ -3,10 +3,19 @@ const http = require('http');
 const WebSocket = require('ws');
 const { OpenAI } = require('openai');
 const fs = require('fs');
-
+const admin = require('firebase-admin');
 
 const API_KEY = "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";
 const openai = new OpenAI({ apiKey: API_KEY });
+
+// Initialize Firebase Admin SDK
+const serviceAccount = require('./key.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+
 
 const app = express();
 
@@ -15,7 +24,7 @@ const credentials = {
     cert: fs.readFileSync('server.crt', 'utf8')
 };
 
-const server = https.createServer(credentials, app);
+const server = http.createServer(credentials, app);
 const wss = new WebSocket.Server({ server });
 
 app.use(express.static('public'));
@@ -36,7 +45,7 @@ wss.on('connection', (ws) => {
             messages: [
                 {"role": "system", "content": frameworks},
                 {"role": "system", "content": premise},
-                {"role": "user", "content": "write a standup set."}
+                {"role": "user", "content": "write a the best five jokes."}
             ],
             model: 'gpt-4',
             stream: true,
@@ -44,12 +53,14 @@ wss.on('connection', (ws) => {
 
         for await (const part of completion) {
             let text = part.choices[0].delta.content ?? "";
-            //full += text;
-
-            ws.send(text);
-             // Send the joke back to the client
+            ws.send(text);// Send the joke back to the client
+            full += text;
         }
         ws.send('\r\n\r\n');
+        db.collection('jokes').add({
+            joke: full,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
     });
 });
 
