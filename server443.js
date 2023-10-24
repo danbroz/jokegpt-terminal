@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const https = require('https');
 const WebSocket = require('ws');
 const { OpenAI } = require('openai');
@@ -16,7 +17,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-
 const app = express();
 
 const credentials = {
@@ -26,6 +26,11 @@ const credentials = {
 
 const server = https.createServer(credentials, app);
 const wss = new WebSocket.Server({ server });
+
+const httpServer = http.createServer((req, res) => {
+    res.writeHead(301, { 'Location': 'https://' + req.headers['host'] + req.url });
+    res.end();
+});
 
 app.use(express.static('public'));
 
@@ -66,4 +71,8 @@ wss.on('connection', (ws) => {
 
 server.listen(443, () => {
     console.log('Server started on https://localhost:443');
+});
+
+httpServer.listen(80, () => {
+    console.log('HTTP Server running on port 80');
 });
