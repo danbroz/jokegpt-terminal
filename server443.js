@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('http');
+const http = require('https');
 const WebSocket = require('ws');
 const { OpenAI } = require('openai');
 const fs = require('fs');
@@ -24,7 +24,7 @@ const credentials = {
     cert: fs.readFileSync('/etc/letsencrypt/live/jokegpt.net/fullchain.pem', 'utf8')
 };
 
-const server = http.createServer(credentials, app);
+const server = https.createServer(credentials, app);
 const wss = new WebSocket.Server({ server });
 
 app.use(express.static('public'));
