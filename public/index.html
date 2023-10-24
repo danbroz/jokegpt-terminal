@@ -64,7 +64,7 @@
         term.open(document.getElementById('terminal'));
         fitAddon.fit();
 
-        const socket = new WebSocket('ws://35.226.164.116:443');
+        const socket = new WebSocket('wss://jokegpt.net');
 
         socket.onopen = () => {
             socket.onmessage = (event) => {
@@ -73,6 +73,7 @@
         };
 
         function submitSubject() {
+            term.clear(); // Clear the terminal
             const subject = document.getElementById('subjectInput').value;
             socket.send(subject);
         }
