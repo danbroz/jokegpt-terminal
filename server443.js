@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('https');
+const https = require('https');
 const WebSocket = require('ws');
 const { OpenAI } = require('openai');
 const fs = require('fs');
