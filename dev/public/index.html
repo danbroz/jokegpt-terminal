@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -46,9 +45,11 @@
             max-width: 500px;
         }
 
+        .xterm-viewport {
+            overflow-y: hidden !important;
+        }
     </style>
 </head>
-
 <body>
     <h1>JokeGPT.net <img src="https://i.ibb.co/k5Gpg6r/1626590-emoji-emoticons-happy-laugh-laughing-icon128px.png" border="0" height="32" width="32"></h1>
     <div id="input-container">
@@ -59,11 +60,25 @@
     <div id="terminal"></div>
 
     <script>
-        const term = new Terminal({
-            convertEol: true,
-            wordWrap: true,
-            scrollback: 0 // This property is set to remove the scrollbar
-        });
+        function wrapText(text, maxLength) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + words[i].length + 1 <= maxLength) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+
+            return lines.join('\n');
+        }
+
+        const term = new Terminal({ convertEol: true, scrollback: 0 });
         const fitAddon = new FitAddon.FitAddon();
         term.loadAddon(fitAddon);
         term.open(document.getElementById('terminal'));
@@ -73,12 +88,13 @@
 
         socket.onopen = () => {
             socket.onmessage = (event) => {
-                term.write(event.data);
+                const wrappedText = wrapText(event.data, 40); // 50 is just an example value
+                term.write(wrappedText);
             };
         };
 
         function submitSubject() {
-            term.clear(); // Clear the terminal
+            term.clear();
             const subject = document.getElementById('subjectInput').value;
             socket.send(subject);
         }
@@ -86,8 +102,6 @@
         window.addEventListener('resize', () => {
             fitAddon.fit();
         });
-
     </script>
 </body>
-
 </html>
